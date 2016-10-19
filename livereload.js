@@ -1,35 +1,31 @@
 (function() {
-    var socket = new WebSocket('ws://' + location.host + '/watch', 'ws');
-    var prefix = location.href.split('/').slice(0,3).join('/') + '/';
-    function watch(url) {
-        if (!url.startsWith(prefix)) return;
-        if (url.indexOf('__devserver__') >= 0) return;
-        if (url.indexOf('?') >= 0) {
-            url = url.slice(0, url.indexOf('?'));
-        }
-        socket.send(url.slice(prefix.length));
-    }
-    socket.onopen = function() {
-        watch(document.location.href);
+    document.addEventListener('DOMContentLoaded', function() {
+        var prefix = location.href.split('/').slice(0,3).join('/') + '/';
+        var urls = [];
+        urls.push(document.location.href);
         for (var tag of document.getElementsByTagName('script')) {
-            watch(tag.src);
+            urls.push(tag.src);
         }
         for (var tag of document.getElementsByTagName('link')) {
-            watch(tag.href);
+            urls.push(tag.href);
         }
-    };
-    socket.onmessage = function(e) {
-        var eventType = e.data.split(' ')[0];
-        var filename = e.data.split(' ')[1];
-        if (eventType == 'change') {
-            location.reload();
-        }
-    };
-    socket.onclose = function(e) {
-        console.log('socket close');
-    };
-    socket.onerror = function(e) {
-        console.log('socket error', e);
-    };
-
+        urls = urls.map(function(i) {
+            if (i.indexOf('?') >= 0) i = i.slice(0, i.indexOf('?'));
+            return i;
+        });
+        urls = urls.filter(function(i) {
+            if (!i.startsWith(prefix)) return false;
+            if (i.indexOf('__dev_autoreload__') >= 0) return false;
+            return true;
+        });
+        console.log(urls);
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/__dev_autoreload__/watch');
+        xhr.send(null);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                location.reload();
+            }
+        };
+    });
 })();
