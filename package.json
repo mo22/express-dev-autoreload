@@ -1,14 +1,28 @@
 {
   "name": "express-dev-autoreload",
   "version": "1.0.0",
-  "description": "",
+  "description": "express plugin that injects javascript code to html responses to automatically reload on changes",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mo22/express-dev-autoreload.git"
   },
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "express",
+    "development",
+    "auto-reload"
+  ],
+  "author": {
+    "name": "Moritz Moeller",
+    "email": "mm@mxs.de"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mo22/express-dev-autoreload/issues"
+  },
+  "homepage": "https://github.com/mo22/express-dev-autoreload#readme",
   "dependencies": {
+    "express-modify-response": "^1.0.0",
     "node-watch": "^0.4.1"
   }
 }
