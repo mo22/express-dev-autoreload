@@ -38,17 +38,25 @@ function expressFilterResponse(modifyCallback)
 }
 
 module.exports = function expressDevAutoReload(options) {
+    var queue = [];
+    var watcher = watch(process.cwd(), (filename) => {
+        for (var i of queue) {
+            try {
+                i(filename);
+            } catch (e) {
+                console.log(e.stack);
+            }
+        }
+        queue = [];
+    });
     return function expressDevAutoReload(req, res, next) {
         if (req.path == '/__dev_autoreload__/livereload.js') {
             res.sendFile(__dirname + '/livereload.js');
             return;
         }
         if (req.path == '/__dev_autoreload__/watch') {
-            watch(process.cwd(), (filename) => {
-                try {
-                    res.send('ok');
-                } catch (e) {
-                }
+            queue.push(() => {
+                res.send('ok');
             });
             return;
         }
