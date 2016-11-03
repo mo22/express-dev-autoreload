@@ -18,7 +18,6 @@
             if (i.indexOf('__dev_autoreload__') >= 0) return false;
             return true;
         });
-        console.log(urls);
         var xhr = new XMLHttpRequest();
         xhr.open('GET', '/__dev_autoreload__/watch');
         xhr.send(null);
