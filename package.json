@@ -1,6 +1,6 @@
 {
   "name": "express-dev-autoreload",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "express plugin that injects javascript code to html responses to automatically reload on changes",
   "main": "index.js",
   "repository": {

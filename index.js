@@ -25,10 +25,8 @@ module.exports = function expressDevAutoReload(options) {
             return;
         }
         expressModifyResponse((req, res) => {
-console.log('FILTER1', req.path, res.getHeader('Content-Type'));
             return res.getHeader('Content-Type') && res.getHeader('Content-Type').startsWith('text/html');
         }, (req, res, body) => {
-console.log('FIXUP1', req.path, res.getHeader('Content-Type'));
             body = body.toString();
             var pos = body.search(new RegExp('</ *body *>', 'i'));
             if (pos == -1) pos = body.length;
