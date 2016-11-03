@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/mo22/express-dev-autoreload#readme",
   "dependencies": {
-    "express-modify-response": "^1.0.0",
+    "express-modify-response": "^1.0.1",
     "node-watch": "^0.4.1"
   }
 }
