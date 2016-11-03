@@ -1,51 +1,5 @@
 const watch = require('node-watch');
-
-function expressFilterResponse(checkCallback, modifyCallback)
-{
-    return function expressFilterResponse(req, res, next) {
-        var _end = res.end;
-        var _write = res.write;
-        var buffers = [];
-        var addBuffer = (chunk, encoding) => {
-            if (chunk === undefined) return;
-            if (typeof chunk === 'string') {
-                chunk = new Buffer(chunk, encoding);
-            }
-            buffers.push(chunk);
-        };
-        res.write = function write(chunk, encoding) {
-            if (!res.headersSent) {
-                var hook = checkCallback(req, res);
-                if (!hook) {
-                    res.end = _end;
-                    res.write = _write;
-                    res.write(chunk, encoding);
-                } else {
-                    addBuffer(chunk, encoding);
-                }
-            } else {
-                addBuffer(chunk, encoding);
-            }
-        };
-        res.end = function end(chunk, encoding) {
-            addBuffer(chunk, encoding);
-            var buffer = Buffer.concat(buffers);
-            Promise.resolve(modifyCallback(req, res, buffer)).then((result) => {
-                if (res.getHeader('Content-Length')) {
-                    res.setHeader('Content-Length', String(result.length));
-                }
-                res.end = _end;
-                res.write = _write;
-                res.write(result);
-                res.end();
-            }).catch((e) => {
-                // handle?
-                next(e);
-            });
-        };
-        next();
-    };
-}
+const expressModifyResponse = require('express-modify-response');
 
 module.exports = function expressDevAutoReload(options) {
     var queue = [];
@@ -70,9 +24,11 @@ module.exports = function expressDevAutoReload(options) {
             });
             return;
         }
-        expressFilterResponse((req, res) => {
+        expressModifyResponse((req, res) => {
+console.log('FILTER1', req.path, res.getHeader('Content-Type'));
             return res.getHeader('Content-Type') && res.getHeader('Content-Type').startsWith('text/html');
         }, (req, res, body) => {
+console.log('FIXUP1', req.path, res.getHeader('Content-Type'));
             body = body.toString();
             var pos = body.search(new RegExp('</ *body *>', 'i'));
             if (pos == -1) pos = body.length;
