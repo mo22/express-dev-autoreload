@@ -1,4 +1,6 @@
 (function() {
+    if (window.__livereload) return;
+    window.__livereload = true;
     document.addEventListener('DOMContentLoaded', function() {
         var prefix = location.href.split('/').slice(0,3).join('/') + '/';
         var urls = [];
